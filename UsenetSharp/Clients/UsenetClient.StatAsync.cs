@@ -13,8 +13,8 @@ public partial class UsenetClient
             ThrowIfNotConnected();
 
             // Send STAT command with message-id
-            await _writer!.WriteLineAsync($"STAT <{segmentId}>".AsMemory(), _cts.Token);
-            var response = await _reader!.ReadLineAsync(_cts.Token);
+            await WriteLineAsync($"STAT <{segmentId}>".AsMemory(), _cts.Token);
+            var response = await ReadLineAsync(_cts.Token);
             var responseCode = ParseResponseCode(response);
 
             return new UsenetStatResponse()

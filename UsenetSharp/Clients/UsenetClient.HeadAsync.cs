@@ -14,8 +14,8 @@ public partial class UsenetClient
             ThrowIfNotConnected();
 
             // Send HEAD command with message-id
-            await _writer!.WriteLineAsync($"HEAD <{segmentId}>".AsMemory(), _cts.Token);
-            var response = await _reader!.ReadLineAsync(_cts.Token);
+            await WriteLineAsync($"HEAD <{segmentId}>".AsMemory(), _cts.Token);
+            var response = await ReadLineAsync(_cts.Token);
             var responseCode = ParseResponseCode(response);
 
             // Article retrieved - head follows (multi-line)

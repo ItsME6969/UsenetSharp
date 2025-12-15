@@ -12,8 +12,8 @@ public partial class UsenetClient
             ThrowIfUnhealthy();
             ThrowIfNotConnected();
 
-            await _writer!.WriteLineAsync("DATE".AsMemory(), _cts.Token);
-            var response = await _reader!.ReadLineAsync(_cts.Token);
+            await WriteLineAsync("DATE".AsMemory(), _cts.Token);
+            var response = await ReadLineAsync(_cts.Token);
             var responseCode = ParseResponseCode(response);
 
             // Response code 111 means success

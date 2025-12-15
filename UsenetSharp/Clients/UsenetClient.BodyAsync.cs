@@ -37,8 +37,8 @@ public partial class UsenetClient
             ThrowIfNotConnected();
 
             // Send BODY command with message-id
-            await _writer!.WriteLineAsync($"BODY <{segmentId}>".AsMemory(), _cts.Token);
-            var response = await _reader!.ReadLineAsync(_cts.Token);
+            await WriteLineAsync($"BODY <{segmentId}>".AsMemory(), _cts.Token);
+            var response = await ReadLineAsync(_cts.Token);
             var responseCode = ParseResponseCode(response);
 
             // Article retrieved - body follows
@@ -102,7 +102,7 @@ public partial class UsenetClient
             // Read lines until we encounter the termination sequence (single dot on a line)
             while (!cancellationToken.IsCancellationRequested)
             {
-                var line = await _reader.ReadLineAsync(cancellationToken);
+                var line = await ReadLineAsync(cancellationToken);
 
                 if (line == null)
                 {
@@ -135,7 +135,8 @@ public partial class UsenetClient
                 writer.Advance(written);
 
                 // Flush periodically to make data available for reading
-                var result = await writer.FlushAsync(cancellationToken);
+                using var flushCts = CreateCtsWithTimeout(cancellationToken);
+                var result = await writer.FlushAsync(flushCts.Token);
                 if (result.IsCompleted || result.IsCanceled)
                 {
                     shouldWrite = false;

@@ -33,7 +33,7 @@ public partial class UsenetClient
             _writer = new StreamWriter(_stream, Encoding.Latin1) { AutoFlush = true };
 
             // Read the server response
-            var response = await _reader.ReadLineAsync(_cts.Token);
+            var response = await ReadLineAsync(_cts.Token);
             var responseCode = ParseResponseCode(response);
 
             // NNTP servers typically respond with "200" or "201" for successful connection

@@ -37,8 +37,8 @@ public partial class UsenetClient
             ThrowIfNotConnected();
 
             // Send ARTICLE command with message-id
-            await _writer!.WriteLineAsync($"ARTICLE <{segmentId}>".AsMemory(), _cts.Token);
-            var response = await _reader!.ReadLineAsync(_cts.Token);
+            await WriteLineAsync($"ARTICLE <{segmentId}>".AsMemory(), _cts.Token);
+            var response = await ReadLineAsync(_cts.Token);
             var responseCode = ParseResponseCode(response);
 
             // Article retrieved - head and body follow
@@ -100,7 +100,7 @@ public partial class UsenetClient
 
         while (!cancellationToken.IsCancellationRequested)
         {
-            var line = await _reader!.ReadLineAsync(cancellationToken);
+            var line = await ReadLineAsync(cancellationToken);
 
             if (line == null)
             {

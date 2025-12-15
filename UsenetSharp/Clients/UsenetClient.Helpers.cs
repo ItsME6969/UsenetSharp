@@ -56,4 +56,23 @@ public partial class UsenetClient
             _backgroundException?.Throw();
         }
     }
+
+    private CancellationTokenSource CreateCtsWithTimeout(CancellationToken cancellationToken)
+    {
+        var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        cts.CancelAfter(TimeSpan.FromSeconds(10));
+        return cts;
+    }
+
+    private async Task WriteLineAsync(ReadOnlyMemory<char> line, CancellationToken cancellationToken)
+    {
+        using var cts = CreateCtsWithTimeout(cancellationToken);
+        await _writer!.WriteLineAsync(line, cts.Token).ConfigureAwait(false);
+    }
+
+    private async ValueTask<string?> ReadLineAsync(CancellationToken cancellationToken)
+    {
+        using var cts = CreateCtsWithTimeout(cancellationToken);
+        return await _reader!.ReadLineAsync(cts.Token).ConfigureAwait(false);
+    }
 }

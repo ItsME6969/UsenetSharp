@@ -13,16 +13,16 @@ public partial class UsenetClient
             ThrowIfNotConnected();
 
             // Send AUTHINFO USER command
-            await _writer!.WriteLineAsync($"AUTHINFO USER {user}".AsMemory(), _cts.Token);
-            var userResponse = await _reader!.ReadLineAsync(_cts.Token);
+            await WriteLineAsync($"AUTHINFO USER {user}".AsMemory(), _cts.Token);
+            var userResponse = await ReadLineAsync(_cts.Token);
             var userResponseCode = ParseResponseCode(userResponse);
 
             // Password required
             if (userResponseCode == (int)UsenetResponseType.PasswordRequired)
             {
                 // Send AUTHINFO PASS command
-                await _writer.WriteLineAsync($"AUTHINFO PASS {pass}".AsMemory(), _cts.Token);
-                var passResponse = await _reader.ReadLineAsync(_cts.Token);
+                await WriteLineAsync($"AUTHINFO PASS {pass}".AsMemory(), _cts.Token);
+                var passResponse = await ReadLineAsync(_cts.Token);
                 var passResponseCode = ParseResponseCode(passResponse);
 
                 return new UsenetResponse()
