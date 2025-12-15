@@ -73,10 +73,7 @@ public class UsenetClientArticleAsyncTests
             Assert.That(headers.MessageId, Is.Not.Empty);
         }
 
-        if (headers.Date != null)
-        {
-            Assert.That(headers.Date, Is.Not.Empty);
-        }
+        Assert.That(headers.Date, Is.Not.Default);
 
         // Read stream to completion
         using var streamReader = new StreamReader(result.Stream);
@@ -201,7 +198,8 @@ public class UsenetClientArticleAsyncTests
 
         // Assert - Should be able to execute another command after stream completes
         var dateResult = await client.DateAsync(cancellationToken);
-        Assert.That(dateResult.ResponseCode, Is.EqualTo(111), "DATE command should succeed after ARTICLE stream completes");
+        Assert.That(dateResult.ResponseCode, Is.EqualTo(111),
+            "DATE command should succeed after ARTICLE stream completes");
     }
 
     [Test]

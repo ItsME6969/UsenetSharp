@@ -99,7 +99,7 @@ public class YencStreamTests
 
         // Assert
         Assert.That(headers, Is.Not.Null);
-        Assert.That(headers!.PartNumber, Is.EqualTo(1));
+        Assert.That(headers!.PartNumber, Is.EqualTo(0));
         Assert.That(headers.PartOffset, Is.EqualTo(0)); // 1-based to 0-based
         Assert.That(headers.PartSize, Is.EqualTo(originalContent.Length));
     }

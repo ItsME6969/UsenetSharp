@@ -64,10 +64,7 @@ public class UsenetClientHeadAsyncTests
             Assert.That(headers.MessageId, Is.Not.Empty);
         }
 
-        if (headers.Date != null)
-        {
-            Assert.That(headers.Date, Is.Not.Empty);
-        }
+        Assert.That(headers.Date, Is.Not.Default);
     }
 
     [Test]
@@ -149,7 +146,8 @@ public class UsenetClientHeadAsyncTests
 
         // Assert - Should be able to execute another command immediately
         var dateResult = await client.DateAsync(cancellationToken);
-        Assert.That(dateResult.ResponseCode, Is.EqualTo(111), "DATE command should succeed after HEAD command completes");
+        Assert.That(dateResult.ResponseCode, Is.EqualTo(111),
+            "DATE command should succeed after HEAD command completes");
     }
 
     [Test]
