@@ -135,8 +135,7 @@ public partial class UsenetClient
                 writer.Advance(written);
 
                 // Flush periodically to make data available for reading
-                using var flushCts = CreateCtsWithTimeout(cancellationToken);
-                var result = await writer.FlushAsync(flushCts.Token);
+                var result = await RunWithTimeoutAsync(writer.FlushAsync, cancellationToken);
                 if (result.IsCompleted || result.IsCanceled)
                 {
                     shouldWrite = false;

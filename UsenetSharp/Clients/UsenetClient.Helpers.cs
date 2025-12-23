@@ -64,15 +64,42 @@ public partial class UsenetClient
         return cts;
     }
 
-    private async Task WriteLineAsync(ReadOnlyMemory<char> line, CancellationToken cancellationToken)
+    private async Task WriteLineAsync(ReadOnlyMemory<char> line, CancellationToken ct)
     {
-        using var cts = CreateCtsWithTimeout(cancellationToken);
-        await _writer!.WriteLineAsync(line, cts.Token).ConfigureAwait(false);
+        using var cts = CreateCtsWithTimeout(ct);
+        try
+        {
+            await _writer!.WriteLineAsync(line, cts.Token).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException e) when (cts.Token.IsCancellationRequested && !ct.IsCancellationRequested)
+        {
+            throw new TimeoutException("Timeout writing to NNTP stream.");
+        }
     }
 
-    private async ValueTask<string?> ReadLineAsync(CancellationToken cancellationToken)
+    private async ValueTask<string?> ReadLineAsync(CancellationToken ct)
     {
-        using var cts = CreateCtsWithTimeout(cancellationToken);
-        return await _reader!.ReadLineAsync(cts.Token).ConfigureAwait(false);
+        using var cts = CreateCtsWithTimeout(ct);
+        try
+        {
+            return await _reader!.ReadLineAsync(cts.Token).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException e) when (cts.Token.IsCancellationRequested && !ct.IsCancellationRequested)
+        {
+            throw new TimeoutException("Timeout reading from NNTP stream.");
+        }
+    }
+
+    private async ValueTask<T> RunWithTimeoutAsync<T>(Func<CancellationToken, ValueTask<T>> func, CancellationToken ct)
+    {
+        using var cts = CreateCtsWithTimeout(ct);
+        try
+        {
+            return await func(cts.Token).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException e) when (cts.Token.IsCancellationRequested && !ct.IsCancellationRequested)
+        {
+            throw new TimeoutException("Timeout encountered within NNTP stream.");
+        }
     }
 }
