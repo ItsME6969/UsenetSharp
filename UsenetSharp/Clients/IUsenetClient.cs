@@ -12,9 +12,13 @@ public interface IUsenetClient
 
     Task<UsenetStatResponse> StatAsync(
         SegmentId segmentId, CancellationToken cancellationToken);
+    Task<IReadOnlyList<UsenetStatResponse>> StatBatchAsync(
+        IReadOnlyList<SegmentId> segmentIds, CancellationToken cancellationToken);
 
     Task<UsenetHeadResponse> HeadAsync(
         SegmentId segmentId, CancellationToken cancellationToken);
+    Task<IReadOnlyList<UsenetHeadResponse>> HeadBatchAsync(
+        IReadOnlyList<SegmentId> segmentIds, CancellationToken cancellationToken);
 
     Task<UsenetBodyResponse> BodyAsync(
         SegmentId segmentId, CancellationToken cancellationToken);
